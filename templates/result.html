@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EEG Analysis Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>EEG Analysis Results</h1>
+
+    <div class="card">
+        <h3>Adjust Time Window</h3>
+        <form action="{{ url_for('update') }}" method="POST">
+            {% for fp in filepaths %}
+                <input type="hidden" name="filepaths" value="{{ fp }}">
+            {% endfor %}
+            <div class="slider-group">
+                <label for="timescale">Time Window: <span id="timeVal">{{ timescale }}</span>s</label>
+                <input type="range" id="timescale" name="timescale" min="0.5" max="30" step="0.5" 
+                       value="{{ timescale }}" oninput="document.getElementById('timeVal').innerText = this.value">
+            </div>
+            <button type="submit" class="btn-primary">Update All Graphs</button>
+        </form>
+    </div>
+
+    {% if avg_plot %}
+    <div class="card result-card" style="border: 2px solid #007bff; background: #f8f9ff;">
+        <h2 style="color: #007bff;">Combined Grand Average</h2>
+        <div class="plot-section">
+            <img src="{{ url_for('static', filename=avg_plot) }}" alt="Grand Average Plot">
+        </div>
+    </div>
+    {% endif %}
+
+    <hr>
+
+    {% for r in results %}
+    <div class="card result-card">
+        <h2>File: {{ r.filename }}</h2>
+        <div class="meta-grid">
+            <div><strong>Channels:</strong> {{ r.channels }}</div>
+            <div><strong>Sampling Rate:</strong> {{ r.sfreq }} Hz</div>
+            <div><strong>Duration:</strong> {{ r.duration }} sec</div>
+        </div>
+        <div class="plot-section">
+            <h3>Time Domain Signal</h3>
+            <img src="{{ url_for('static', filename=r.time_plot) }}" alt="Time Plot">
+        </div>
+        <div class="plot-section">
+            <h3>Power Spectral Density</h3>
+            <img src="{{ url_for('static', filename=r.psd_plot) }}" alt="PSD Plot">
+        </div>
+        <div class="band-section">
+            <h3>Band Power Analysis</h3>
+            <ul class="band-list">
+                {% for band, value in r.bands.items() %}
+                    <li><span>{{ band }}</span> <span>{{ "%.4f"|format(value) }}</span></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</body>
+</html>

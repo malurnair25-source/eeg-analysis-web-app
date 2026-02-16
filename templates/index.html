@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EEG Analysis Portal</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="card">
+        <h1>EEG Signal Analysis</h1>
+        <p class="subtitle">Upload one or more EDF files to analyze time-domain signals and frequency bands.</p>
+
+        <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label for="eegfiles">Select EEG File(s)</label>
+                <input 
+                    type="file" 
+                    id="eegfiles" 
+                    name="eegfiles" 
+                    accept=".edf"
+                    multiple 
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Analyze EEG
+            </button>
+
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>
